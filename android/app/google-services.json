@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "544226191997",
+    "project_id": "kopma-uin-suka-c3370",
+    "storage_bucket": "kopma-uin-suka-c3370.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544226191997:android:bfa6c753c5f42b00d0df14",
+        "android_client_info": {
+          "package_name": "com.example.kopma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544226191997-7qqqa2dcf0dpcjure18vom11us2ni8ah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8pZ5yLFPIHZmhZFmDStc6BQ6ZMyQKqno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544226191997-7qqqa2dcf0dpcjure18vom11us2ni8ah.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "544226191997-30sb9v5q35bgpk6g5a900sgerc5his9q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.kopma"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
