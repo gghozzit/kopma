@@ -4,14 +4,11 @@ import 'package:kopma/data/model/item/item_model.dart';
 import '../../data/item_repository.dart';
 import 'dart:developer';
 
-
 part 'detail_item_event.dart';
 part 'detail_item_state.dart';
 
-
 class DetailItemBloc extends Bloc<DetailItemEvent, DetailItemState> {
   final ItemRepository itemRepository;
-
 
   DetailItemBloc({required this.itemRepository}) : super(const DetailItemState.initial()) {
     on<GetDetailItem>((event, emit) async {
@@ -29,7 +26,6 @@ class DetailItemBloc extends Bloc<DetailItemEvent, DetailItemState> {
       }
     });
 
-
     on<BuyItem>((event, emit) async {
       try {
         emit(const BuyItemLoading.empty());
@@ -40,7 +36,6 @@ class DetailItemBloc extends Bloc<DetailItemEvent, DetailItemState> {
         emit(BuyItemFailure(e.toString()));
       }
     });
-
 
     on<AddItemToCart>((event, emit) async {
       try {
