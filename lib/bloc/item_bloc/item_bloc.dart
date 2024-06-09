@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/item_repository.dart';
 import '../../data/model/item/item_model.dart';
 
-
 part 'item_event.dart';
 
 part 'item_state.dart';

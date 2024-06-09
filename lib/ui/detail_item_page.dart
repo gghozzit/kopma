@@ -30,27 +30,31 @@ class _DetailItemPageState extends State<DetailItemPage> {
       body: BlocListener<DetailItemBloc, DetailItemState>(
         listener: (context, state) {
           if (state == const DetailItemState.empty()) {
-            showOkAlertDialog(
-              context: context,
-              title: "No Data",
-              message: "No data available for this item.",
-            );
+            const Text("No Data");
           }
           if (state is AddItemToCartFailure) {
             showOkAlertDialog(
                 context: context, title: "Error", message: state.errorMessage);
-            context.read<DetailItemBloc>().add(GetDetailItem(itemId: widget.idItem));
+            context
+                .read<DetailItemBloc>()
+                .add(GetDetailItem(itemId: widget.idItem));
           } else if (state is AddItemToCartSuccess) {
             showOkAlertDialog(
                 context: context,
                 title: "Success",
                 message:
                 "Nailed it! ${state.item?.name} is chilling in your cart.");
-            context.read<DetailItemBloc>().add(GetDetailItem(itemId: widget.idItem));
-          } else if(state is BuyItemSuccess) {
-            context.read<DetailItemBloc>().add(GetDetailItem(itemId: widget.idItem));
-          } else if(state is BuyItemFailure) {
-            context.read<DetailItemBloc>().add(GetDetailItem(itemId: widget.idItem));
+            context
+                .read<DetailItemBloc>()
+                .add(GetDetailItem(itemId: widget.idItem));
+          } else if (state is BuyItemSuccess) {
+            context
+                .read<DetailItemBloc>()
+                .add(GetDetailItem(itemId: widget.idItem));
+          } else if (state is BuyItemFailure) {
+            context
+                .read<DetailItemBloc>()
+                .add(GetDetailItem(itemId: widget.idItem));
           }
         },
         child: BlocBuilder<DetailItemBloc, DetailItemState>(
@@ -60,30 +64,59 @@ class _DetailItemPageState extends State<DetailItemPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Card(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child:
+                      Column (
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          CachedNetworkImage(
-                            imageUrl: state.item?.image?.isNotEmpty == true
-                                ? state.item!.image
-                                : "https://via.placeholder.com/150",
-                            placeholder: (context, url) => const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                          Text(
+                            state.item?.name ?? "",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600),
                           ),
-                          Text(state.item?.name ?? ""),
-                          Text(state.item?.price?.toString() ?? ""),
+                          Padding(
+                            padding:
+                            const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                            child: Container(
+                              width: 200,
+                              height: 200,
+                              child: CachedNetworkImage(
+                                imageUrl: state.item?.image ?? "",
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                            ),
+                          ),
+                          Text('(' + (state.item?.category ?? "") + ')'),
+                          Text('IDR ' +
+                              (state.item?.price.toString() ?? ""),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),),
                         ],
                       ),
                     ),
                     Card(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Category"),
-                          Text(state.item?.category ?? ""),
-                          const Text("Description"),
-                          Text(state.item?.description ?? "")
+                          const Text(
+                            "Description",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            state.item?.description ?? "",
+                            style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400),
+                          )
                         ],
                       ),
                     ),
@@ -127,8 +160,7 @@ class _DetailItemPageState extends State<DetailItemPage> {
                         ],
                       ),
                     )
-                  ]
-              ),
+                  ]),
             );
           },
         ),

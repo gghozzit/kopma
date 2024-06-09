@@ -109,7 +109,7 @@ class _PostItemPageState extends State<PostItemPage> {
               MyTextField(
                   controller: descriptionController,
                   hintText: 'Item\'s description',
-                  // maxLines: 4,
+                  maxLines: 4,
                   obscureText: false,
                   textInputAction: TextInputAction.newline,
                   keyboardType: TextInputType.multiline,

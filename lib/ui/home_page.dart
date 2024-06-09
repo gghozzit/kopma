@@ -8,17 +8,14 @@ import 'package:kopma/ui/detail_item_page.dart';
 import 'package:kopma/ui/post_item_page.dart';
 import '../data/model/item/item_model.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
   });
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 
 class _HomePageState extends State<HomePage> {
   @override
@@ -26,7 +23,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     context.read<ItemBloc>().add(const GetListItems(query: ""));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +68,7 @@ class _HomePageState extends State<HomePage> {
                       snapshot.fetchMore();
                     }
 
-
                     final item = snapshot.docs[index].data();
-
 
                     return ItemWidget(item: ItemModel.fromEntity(ItemEntity.fromDocument(item)));
                   },
@@ -90,13 +84,10 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
 class ItemWidget extends StatelessWidget {
   final ItemModel item;
 
-
   const ItemWidget({super.key, required this.item});
-
 
   @override
   Widget build(BuildContext context) {

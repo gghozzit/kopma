@@ -9,17 +9,19 @@ class UserModel extends Equatable {
   final String? address;
   final int? balance;
 
+
   const UserModel({
     required this.id,
     required this.name,
     required this.email,
     this.image,
     this.address,
-    this.balance,
+    this.balance
   });
 
   /// Empty user which represents an unauthenticated user.
-  static const empty = UserModel(id: '',
+  static const empty = UserModel(
+    id: '',
     name: '',
     email: '',
     image: '',
@@ -27,7 +29,7 @@ class UserModel extends Equatable {
     balance: 0,
   );
 
-  // Modify MyUser parameters
+  /// Modify MyUser parameters
   UserModel copyWith({
     String? id,
     String? name,
@@ -46,12 +48,11 @@ class UserModel extends Equatable {
     );
   }
 
-  /// Convenience getter to determine whether the current user is empty
+  /// Convenience getter to determine whether the current user is empty.
   bool get isEmpty => this == UserModel.empty;
 
   /// Convenience getter to determine whether the current user is not empty.
   bool get isNotEmpty => this != UserModel.empty;
-
 
   UserEntity toEntity() {
     return UserEntity(
@@ -64,7 +65,6 @@ class UserModel extends Equatable {
     );
   }
 
-
   static UserModel fromEntity(UserEntity entity) {
     return UserModel(
         id: entity.id,
@@ -75,7 +75,6 @@ class UserModel extends Equatable {
         balance: entity.balance
     );
   }
-
 
   @override
   List<Object?> get props => [id, name, email, image, address, balance];

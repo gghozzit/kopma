@@ -21,24 +21,20 @@ import 'data/user_repository.dart';
 import 'di/service_locator.dart';
 import 'firebase_options.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupServiceLocator();
   await serviceLocator<LocalDatabase>().initialize();
   Bloc.observer = SimpleBlocObserver();
-  runApp(MyApp(FirebaseUserDataSource(), ItemRepositoryImpl(FirebaseItemDataSource(), LocalCartDataSource())));
+  runApp(MyApp(FirebaseUserDataSource(), ItemRepositoryImpl(FirebaseItemDataSource(), LocalCartDataSource(FirebaseItemDataSource()))));
 }
-
 
 class MyApp extends StatelessWidget {
   final UserRepository userRepository;
   final ItemRepository itemRepository;
 
-
   const MyApp(this.userRepository, this.itemRepository, {super.key});
-
 
   // This widget is the root of your application.
   @override
@@ -76,18 +72,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class MainApp extends StatefulWidget {
   final UserRepository userRepository;
 
-
   const MainApp({super.key, required this.userRepository});
-
 
   @override
   State<MainApp> createState() => _MainApp();
 }
-
 
 class _MainApp extends State<MainApp> {
   // This widget is the root of your application.
@@ -107,11 +99,11 @@ class _MainApp extends State<MainApp> {
               padding: MaterialStateProperty.all<EdgeInsets>(
                 const EdgeInsets.all(8),
               ),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
           ),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
           useMaterial3: true),
       localizationsDelegates: const [
         DefaultMaterialLocalizations.delegate,

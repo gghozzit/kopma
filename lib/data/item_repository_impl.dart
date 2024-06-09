@@ -6,14 +6,11 @@ import 'datasource/local/local_cart_datasource.dart';
 import 'datasource/network/firebase_item_datasource.dart';
 import 'item_repository.dart';
 
-
 class ItemRepositoryImpl implements ItemRepository {
   final FirebaseItemDataSource _firebaseItemDataSource;
   final LocalCartDataSource _localCartDataSource;
 
-
   ItemRepositoryImpl(this._firebaseItemDataSource, this._localCartDataSource);
-
 
   @override
   Future<bool> postItem(ItemModel item) async {
@@ -25,7 +22,6 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-
   @override
   Future<String> uploadImage(File file, String fileName) async {
     try {
@@ -35,7 +31,6 @@ class ItemRepositoryImpl implements ItemRepository {
       rethrow;
     }
   }
-
 
   @override
   Future<bool> buyItem(String itemId, int quantity) async {
@@ -47,13 +42,11 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-
   @override
   Future<bool> deleteItem(String itemId) {
     // TODO: implement deleteItem
     throw UnimplementedError();
   }
-
 
   @override
   Future<ItemModel> getDetailItem(String id) async {
@@ -65,7 +58,6 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-
   @override
   Query<Map<String, dynamic>> getListItem(String? query) {
     try {
@@ -75,8 +67,6 @@ class ItemRepositoryImpl implements ItemRepository {
       rethrow;
     }
   }
-
-
 
   @override
   Future<List<ItemModel>> getListItemFromCart() async {
@@ -88,7 +78,6 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-
   @override
   Future<bool> addItemToCart(ItemModel item) async {
     try {
@@ -98,7 +87,6 @@ class ItemRepositoryImpl implements ItemRepository {
       rethrow;
     }
   }
-
 
   @override
   Future<bool> buyItemFromCart(String itemId, int quantity) async {
@@ -112,7 +100,6 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 
-
   @override
   Future<bool> deleteItemFromCart(String itemId) async {
     try {
@@ -123,5 +110,3 @@ class ItemRepositoryImpl implements ItemRepository {
     }
   }
 }
-
-

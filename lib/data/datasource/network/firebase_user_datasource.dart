@@ -26,8 +26,8 @@ class FirebaseUserDataSource implements UserRepository {
       return await usersCollection
           .doc(myUserId)
           .get()
-          .whenComplete(() {
-        if(sharedPrefService.uid.isEmpty) sharedPrefService.uid = myUserId;
+          .whenComplete(() => {
+        if(sharedPrefService.uid.isEmpty) sharedPrefService.uid = myUserId
       }).then((value) => UserModel.fromEntity(UserEntity.fromDocument(value.data()!)));
     } catch (e) {
       log(e.toString());

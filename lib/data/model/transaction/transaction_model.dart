@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:kopma/data/model/transaction/transaction_entity.dart';
 
-
 class TransactionModel extends Equatable {
   final String id;
   final DateTime dateTime;
@@ -20,7 +19,6 @@ class TransactionModel extends Equatable {
   final String sellerEmail;
   final String sellerAddress;
   final String? sellerImage;
-
 
   const TransactionModel({
     required this.id,
@@ -42,7 +40,6 @@ class TransactionModel extends Equatable {
     required this.sellerImage,
   });
 
-
   /// Empty item.
   static TransactionModel empty = TransactionModel(
     id: '',
@@ -63,7 +60,6 @@ class TransactionModel extends Equatable {
     sellerAddress: '',
     sellerImage: '',
   );
-
 
   /// Modify item parameters
   TransactionModel copyWith({
@@ -106,14 +102,11 @@ class TransactionModel extends Equatable {
     );
   }
 
-
   /// Convenience getter to determine whether the current item is empty.
   bool get isEmpty => this == TransactionModel.empty;
 
-
   /// Convenience getter to determine whether the current item is not empty.
   bool get isNotEmpty => this != TransactionModel.empty;
-
 
   TransactionEntity toEntity() {
     return TransactionEntity(
@@ -137,7 +130,6 @@ class TransactionModel extends Equatable {
     );
   }
 
-
   static TransactionModel fromEntity(TransactionEntity entity) {
     return TransactionModel(
       id: entity.id,
@@ -159,7 +151,6 @@ class TransactionModel extends Equatable {
       sellerImage: entity.sellerImage,
     );
   }
-
 
   @override
   List<Object?> get props => [

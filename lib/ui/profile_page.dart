@@ -27,6 +27,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+
+    print('Init state called');
+    print('User ID: ${sharedPrefService.uid}');
+
     context.read<UserBloc>().add(GetMyUser(myUserId: sharedPrefService.uid));
   }
 
@@ -44,9 +48,9 @@ class _ProfilePageState extends State<ProfilePage> {
               actions: [
                 DisplayNameChangedAction((context, oldName, newName) {
                   setState(() {
-                    context.read<UserBloc>().add(SetUserData(
-                        user: user.copyWith(
-                            name: newName)));
+                    context
+                        .read<UserBloc>()
+                        .add(SetUserData(user: user.copyWith(name: newName)));
                   });
                 }),
                 SignedOutAction((context) {
@@ -108,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       setState(() {
                         context.read<UserBloc>().add(SetUserData(
                             user: user.copyWith(
-                              id: sharedPrefService.uid,
+                              // id: sharedPrefService.uid,
                                 address: addressController.text)));
                       });
                     },

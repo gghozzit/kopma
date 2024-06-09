@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-
 class TransactionEntity extends Equatable {
   final String id;
   final DateTime dateTime;
@@ -19,7 +18,6 @@ class TransactionEntity extends Equatable {
   final String sellerEmail;
   final String sellerAddress;
   final String? sellerImage;
-
 
   const TransactionEntity({
     required this.id,
@@ -40,7 +38,6 @@ class TransactionEntity extends Equatable {
     required this.sellerAddress,
     required this.sellerImage,
   });
-
 
   Map<String, Object?> toDocument() {
     return {
@@ -64,7 +61,6 @@ class TransactionEntity extends Equatable {
     };
   }
 
-
   static TransactionEntity fromDocument(Map<String, dynamic> doc) {
     return TransactionEntity(
       id: doc['id'] as String,
@@ -87,7 +83,6 @@ class TransactionEntity extends Equatable {
     );
   }
 
-
   @override
   List<Object?> get props => [
     id,
@@ -109,27 +104,26 @@ class TransactionEntity extends Equatable {
     sellerImage,
   ];
 
-
   @override
   String toString() {
     return '''TransactionEntity: {
-     id: $id
-     dateTime: $dateTime
-     itemId: $itemId
-     itemName: $itemName
-     itemImage: $itemImage
-     itemQuantity: $itemQuantity
-     itemPrice: $itemPrice
-     buyerId: $buyerId
-     buyerName: $buyerName
-     buyerEmail: $buyerEmail
-     buyerAddress: $buyerAddress
-     buyerMoney: $buyerMoney
-     sellerId: $sellerId
-     sellerName: $sellerName
-     sellerEmail: $sellerEmail
-     sellerAddress: $sellerAddress
-     sellerImage: $sellerImage
-   }''';
+      id: $id
+      dateTime: $dateTime
+      itemId: $itemId
+      itemName: $itemName
+      itemImage: $itemImage
+      itemQuantity: $itemQuantity
+      itemPrice: $itemPrice
+      buyerId: $buyerId
+      buyerName: $buyerName
+      buyerEmail: $buyerEmail
+      buyerAddress: $buyerAddress
+      buyerMoney: $buyerMoney
+      sellerId: $sellerId
+      sellerName: $sellerName
+      sellerEmail: $sellerEmail
+      sellerAddress: $sellerAddress
+      sellerImage: $sellerImage
+    }''';
   }
 }

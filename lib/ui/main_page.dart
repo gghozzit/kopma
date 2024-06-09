@@ -5,7 +5,6 @@ import 'package:kopma/data/user_repository.dart';
 import 'package:kopma/ui/history_page.dart';
 import 'package:kopma/ui/home_page.dart';
 import 'package:kopma/ui/profile_page.dart';
-
 import '../bloc/user_bloc/user_bloc.dart';
 import '../data/datasource/shared_preferences_service.dart';
 import '../di/service_locator.dart';
@@ -13,7 +12,6 @@ import 'cart_page.dart';
 
 class MainPage extends StatefulWidget {
   final UserRepository userRepository;
-
   const MainPage({super.key, required this.userRepository});
 
   @override
@@ -33,6 +31,11 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+
+    // Log a message when initState is called
+    print('Init state called');
+    print('User ID: ${sharedPrefService.uid}');
+
     context.read<UserBloc>().add(GetMyUser(myUserId: sharedPrefService.uid));
   }
 
@@ -40,10 +43,8 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
       const HomePage(),
-      const HistoryPage(),
-      ProfilePage(
-        userRepository: widget.userRepository,
-      )
+      HistoryPage(),
+      ProfilePage(userRepository: widget.userRepository,)
     ];
     return Scaffold(
       appBar: AppBar(
@@ -63,9 +64,9 @@ class _MainPageState extends State<MainPage> {
       body: widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 34,
-        selectedItemColor: Colors.black,
+        selectedItemColor: Colors.green,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-        unselectedItemColor: Colors.black38,
+        unselectedItemColor: Colors.deepOrangeAccent,
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         showUnselectedLabels: true,
         items: const <BottomNavigationBarItem>[

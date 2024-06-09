@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'item_entity.dart';
 
-
 class ItemModel extends Equatable {
   final String? id;
   final String name;
@@ -15,6 +14,7 @@ class ItemModel extends Equatable {
   final String? sellerEmail;
   final String? sellerAddress;
   final String? sellerImage;
+  final String? itemId;
 
   const ItemModel({
     this.id,
@@ -29,6 +29,7 @@ class ItemModel extends Equatable {
     this.sellerEmail,
     this.sellerAddress,
     this.sellerImage,
+    this.itemId,
   });
 
   /// Empty item.
@@ -50,6 +51,7 @@ class ItemModel extends Equatable {
   /// Modify item parameters
   ItemModel copyWith({
     String? id,
+    String? itemId,
     String? name,
     String? image,
     String? category,
@@ -64,6 +66,7 @@ class ItemModel extends Equatable {
   }) {
     return ItemModel(
       id: id ?? this.id,
+      itemId: this.itemId,
       name: name ?? this.name,
       image: image ?? this.image,
       category: category ?? this.category,
