@@ -5,21 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kopma/bloc/detail_item_bloc/detail_item_bloc.dart';
 import 'package:kopma/data/model/item/item_model.dart';
 
-
 import 'checkout_page.dart';
-
 
 class DetailItemPage extends StatefulWidget {
   final String idItem;
 
-
   const DetailItemPage({super.key, required this.idItem});
-
 
   @override
   State<DetailItemPage> createState() => _DetailItemPageState();
 }
-
 
 class _DetailItemPageState extends State<DetailItemPage> {
   @override
@@ -28,7 +23,6 @@ class _DetailItemPageState extends State<DetailItemPage> {
     context.read<DetailItemBloc>().add(GetDetailItem(itemId: widget.idItem));
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +30,11 @@ class _DetailItemPageState extends State<DetailItemPage> {
       body: BlocListener<DetailItemBloc, DetailItemState>(
         listener: (context, state) {
           if (state == const DetailItemState.empty()) {
-            const Text("No Data");
+            showOkAlertDialog(
+              context: context,
+              title: "No Data",
+              message: "No data available for this item.",
+            );
           }
           if (state is AddItemToCartFailure) {
             showOkAlertDialog(
@@ -66,10 +64,14 @@ class _DetailItemPageState extends State<DetailItemPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CachedNetworkImage(
-                            imageUrl: state.item?.image ?? "",
+                            imageUrl: state.item?.image?.isNotEmpty == true
+                                ? state.item!.image
+                                : "https://via.placeholder.com/150",
+                            placeholder: (context, url) => const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
                           ),
                           Text(state.item?.name ?? ""),
-                          Text(state.item?.price.toString() ?? ""),
+                          Text(state.item?.price?.toString() ?? ""),
                         ],
                       ),
                     ),
