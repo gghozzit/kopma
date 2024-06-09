@@ -6,10 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kopma/bloc/item_bloc/item_bloc.dart';
 import 'package:kopma/data/model/item/item_model.dart';
-import 'component/text_field.dart';
 
 class PostItemPage extends StatefulWidget {
-  const PostItemPage({super.key});
+  const PostItemPage({Key? key}) : super(key: key);
 
   @override
   State<PostItemPage> createState() => _PostItemPageState();
@@ -53,10 +52,10 @@ class _PostItemPageState extends State<PostItemPage> {
           if (state is UploadItemSuccess) {
             if (state.isSuccess) {
               showOkAlertDialog(
-                  context: context,
-                  title: "Success",
-                  message:
-                  "Your item is live and ready to sell.");
+                context: context,
+                title: "Success",
+                message: "Your item is live and ready to sell.",
+              );
               setState(() {
                 nameController.text = "";
                 descriptionController.text = "";
@@ -65,125 +64,114 @@ class _PostItemPageState extends State<PostItemPage> {
               });
             } else {
               showOkAlertDialog(
-                  context: context,
-                  title: "Error",
-                  message:
-                  "Please complete your profile information, including your name and address.");
+                context: context,
+                title: "Error",
+                message:
+                "Please complete your profile information, including your name and address.",
+              );
             }
           }
         },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              BlocBuilder<ItemBloc, ItemState>(builder: (context, state) {
-                imageUrl = state.imageUrl ??
-                    "https://via.assets.so/img.jpg?w=800&h=800&tc=&bg=#cecece&t=Image";
-                return CachedNetworkImage(
-                  imageUrl: imageUrl,
-                );
-              }),
-              IconButton(
-                  onPressed: () async {
-                    final XFile? images =
-                    await picker.pickImage(source: ImageSource.gallery);
-                    if (context.mounted) {
-                      context.read<ItemBloc>().add(UploadImage(
-                          file: File(images!.path), fileName: images.name));
-                    }
-                  },
-                  icon: const Icon(Icons.add_a_photo_rounded)),
-              MyTextField(
-                  controller: nameController,
-                  hintText: 'Nama Barang',
-                  obscureText: false,
-                  keyboardType: TextInputType.name,
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please fill in this field';
-                    }
-                    return null;
-                  }),
-              const Padding(padding: EdgeInsets.all(4)),
-              MyTextField(
-                  controller: descriptionController,
-                  hintText: 'Deskripsi Barang',
-                  maxLines: 4,
-                  obscureText: false,
-                  textInputAction: TextInputAction.newline,
-                  keyboardType: TextInputType.multiline,
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please fill in this field';
-                    }
-                    return null;
-                  }),
-              DropdownButton(
-                // Initial Value
-                value: categoriesValue,
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-                // Array list of items
-                items: categories.map((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
+              BlocBuilder<ItemBloc, ItemState>(
+                builder: (context, state) {
+                  imageUrl = state.imageUrl ??
+                      "https://via.assets.so/img.jpg?w=800&h=800&tc=&bg=#cecece&t=Image";
+                  return CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    height: 180,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (_, __, ___) => const Icon(Icons.error),
                   );
-                }).toList(),
-                // After selecting the desired option,it will
-                // change button value to selected value
-                onChanged: (String? newValue) {
+                },
+              ),
+              const SizedBox(height: 8),
+              IconButton(
+                onPressed: () async {
+                  final XFile? images =
+                  await picker.pickImage(source: ImageSource.gallery);
+                  if (context.mounted) {
+                    context.read<ItemBloc>().add(UploadImage(
+                      file: File(images!.path),
+                      fileName: images.name,
+                    ));
+                  }
+                },
+                icon: const Icon(Icons.add_a_photo_rounded),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: 'Nama Barang',
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: descriptionController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Deskripsi Barang',
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: categoriesValue,
+                onChanged: (newValue) {
                   setState(() {
                     categoriesValue = newValue!;
                   });
                 },
+                items: categories.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  MyTextField(
-                      controller: quantityController,
-                      hintText: 'Stok Barang',
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return 'Please fill in this field';
-                        }
-                        return null;
-                      }),
-                  const Padding(padding: EdgeInsets.all(4)),
-                  MyTextField(
-                      controller: priceController,
-                      hintText: 'Harga Barang Perunit',
-                      obscureText: false,
-                      textInputAction: TextInputAction.done,
-                      keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return 'Please fill in this field';
-                        }
-                        return null;
-                      }),
-                  const Padding(padding: EdgeInsets.all(4)),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          context.read<ItemBloc>().add(PostItem(
-                              item: ItemModel(
-                                  name: nameController.text,
-                                  image: imageUrl,
-                                  category: categoriesValue,
-                                  description: descriptionController.text,
-                                  quantity: int.parse(quantityController.text),
-                                  price: int.parse(priceController.text))));
-                        });
-                      },
-                      icon: const Icon(Icons.add_business_rounded),
-                      label: const Text("Jual Barang"))
-                ],
+              const SizedBox(height: 8),
+              TextField(
+                controller: quantityController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Stok Barang',
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: priceController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Harga Barang',
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    context.read<ItemBloc>().add(
+                      PostItem(
+                        item: ItemModel(
+                          name: nameController.text,
+                          image: imageUrl,
+                          category: categoriesValue,
+                          description: descriptionController.text,
+                          quantity: int.parse(quantityController.text),
+                          price: int.parse(priceController.text),
+                        ),
+                      ),
+                    );
+                  });
+                },
+                icon: const Icon(Icons.add_business_rounded),
+                label: const Text("Jual Barang"),
               ),
             ],
           ),

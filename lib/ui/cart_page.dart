@@ -1,13 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../data/datasource/local/local_cart_datasource.dart';
 import '../data/datasource/network/firebase_item_datasource.dart';
 import '../data/model/item/item_model.dart';
 import 'detail_item_page.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  const CartPage({Key? key});
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -109,6 +110,8 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     int totalPrice = _calculateTotalPrice();
+    final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Keranjang'),
@@ -119,120 +122,89 @@ class _CartPageState extends State<CartPage> {
           ? const Center(child: Text('Keranjang Kosong'))
           : Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-                  child: InkWell(
-                    onTap: () {
-                      if (item.itemId != null && item.itemId!.isNotEmpty) {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return DetailItemPage(idItem: item.itemId!);
-                        }));
-                      }
-                    },
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  width: 120,
-                                  height: 120,
-                                  color: Colors.grey[300],
-                                  child: item.image.isNotEmpty
-                                      ? Image.network(item.image)
-                                      : const Center(child: Text('No image')),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        item.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18.0,
-                                        ),
-                                      ),
-                                      Text('Penjual: ${item.sellerName}'),
-                                      Row(
-                                        children: <Widget>[
-                                          IconButton(
-                                            icon: const Icon(Icons.remove),
-                                            onPressed: () => _decrementQuantity(index, item.itemId),
-                                          ),
-                                          Text('${item.quantity}'),
-                                          IconButton(
-                                            icon: const Icon(Icons.add),
-                                            onPressed: () => _incrementQuantity(index, item.itemId),
-                                          ),
-                                        ],
-                                      ),
-                                      Text('Harga @ Rp.${item.price}'),
-                                      Text('Total: Rp.${item.price * item.quantity}'),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.blueGrey),
-                                onPressed: () {
-                                  _deleteItem(index, item.id.toString());
-                                },
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _buyItem(context, item.id, item.itemId, item.quantity);
-                                },
-                                child: const Text('Beli'),
-                              ),
-                            ),
-                          ],
+      Expanded(
+      child: ListView.builder(
+      itemCount: cartItems.length,
+        itemBuilder: (context, index) {
+          final item = cartItems[index];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 4,
+              child: ListTile(
+                onTap: () {
+                  if (item.itemId != null && item.itemId!.isNotEmpty) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return DetailItemPage(idItem: item.itemId!);
+                    }));
+                  }
+                },
+                leading: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                  ),
+                  child: item.image.isNotEmpty ? Image.network(item.image) : const Center(child: Text('No image')),
+                ),
+                title: Text(
+                  item.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Penjual: ${item.sellerName}'),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => _decrementQuantity(index, item.itemId),
+                          icon: const Icon(Icons.remove),
                         ),
-                      ),
+                        Text(item.quantity.toString()),
+                        IconButton(
+                          onPressed: () => _incrementQuantity(index, item.itemId),
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Card(
-            margin: const EdgeInsets.all(8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Harga Total : Rp.$totalPrice',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _buyAllItems(context, cartItems, totalPrice);
-                    },
-                    child: const Text('Beli Semua'),
-                  ),
-                ],
+                    Text('Harga: ${currencyFormat.format(item.price)}'),
+                    Text('Total: ${currencyFormat.format(item.price * item.quantity)}'),
+                  ],
+                ),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    _buyItem(context, item.id, item.itemId, item.quantity);
+                  },
+                  child: const Text('Beli'),
+                ),
               ),
             ),
+          );
+        },
+      ),
+    ),
+    Card(
+    margin: const EdgeInsets.all(8.0),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Harga Total : ${currencyFormat.format(totalPrice)}', // Format nominal rupiah
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          ElevatedButton(
+            onPressed: () {
+              _buyAllItems(context, cartItems, totalPrice);
+            },
+            child: const Text('Beli Semua'),
+          ),
+        ],
+      ),
+    ),
+    ),
         ],
       ),
     );

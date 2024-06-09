@@ -34,84 +34,89 @@ class MyApp extends StatelessWidget {
   final UserRepository userRepository;
   final ItemRepository itemRepository;
 
-  const MyApp(this.userRepository, this.itemRepository, {super.key});
+  const MyApp(this.userRepository, this.itemRepository, {Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider<UserBloc>(
-              create: (_) => UserBloc(userRepository: userRepository)),
-          RepositoryProvider<ItemBloc>(
-              create: (_) => ItemBloc(itemRepository: itemRepository)),
-          RepositoryProvider<DetailItemBloc>(
-              create: (_) => DetailItemBloc(itemRepository: itemRepository)),
-        ],
-        child: BlocBuilder<UserBloc, UserState>(
-          builder: (BuildContext context, UserState state) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                    create: (context) => UserBloc(
-                        userRepository:
-                        context.read<UserBloc>().userRepository)),
-                BlocProvider(
-                    create: (context) => ItemBloc(
-                        itemRepository:
-                        context.read<ItemBloc>().itemRepository)),
-                BlocProvider(
-                    create: (context) => DetailItemBloc(
-                        itemRepository:
-                        context.read<DetailItemBloc>().itemRepository)),
-              ],
-              child: MainApp(userRepository: userRepository),
-            );
-          },
-        ));
+      providers: [
+        RepositoryProvider<UserBloc>(
+          create: (_) => UserBloc(userRepository: userRepository),
+        ),
+        RepositoryProvider<ItemBloc>(
+          create: (_) => ItemBloc(itemRepository: itemRepository),
+        ),
+        RepositoryProvider<DetailItemBloc>(
+          create: (_) => DetailItemBloc(itemRepository: itemRepository),
+        ),
+      ],
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (BuildContext context, UserState state) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => UserBloc(
+                  userRepository: context.read<UserBloc>().userRepository,
+                ),
+              ),
+              BlocProvider(
+                create: (context) => ItemBloc(
+                  itemRepository: context.read<ItemBloc>().itemRepository,
+                ),
+              ),
+              BlocProvider(
+                create: (context) => DetailItemBloc(
+                  itemRepository: context.read<DetailItemBloc>().itemRepository,
+                ),
+              ),
+            ],
+            child: MainApp(userRepository: userRepository),
+          );
+        },
+      ),
+    );
   }
 }
 
 class MainApp extends StatefulWidget {
   final UserRepository userRepository;
 
-  const MainApp({super.key, required this.userRepository});
+  const MainApp({Key? key, required this.userRepository}) : super(key: key);
 
   @override
-  State<MainApp> createState() => _MainApp();
+  State<MainApp> createState() => _MainAppState();
 }
 
-class _MainApp extends State<MainApp> {
-  // This widget is the root of your application.
+class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'kopma',
       theme: ThemeData(
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsets>(
-                const EdgeInsets.all(8),
-              ),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            padding: MaterialStateProperty.all<EdgeInsets>(
+              const EdgeInsets.all(8),
             ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey),
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
-          useMaterial3: true),
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        useMaterial3: true,
+      ),
       localizationsDelegates: const [
         DefaultMaterialLocalizations.delegate,
         DefaultWidgetsLocalizations.delegate,
         DefaultCupertinoLocalizations.delegate, // This is required
       ],
-      initialRoute:
-      FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/home',
+      initialRoute: FirebaseAuth.instance.currentUser == null ? '/sign-in' : '/home',
       routes: {
         '/sign-in': (context) {
           return BlocListener<UserBloc, UserState>(
@@ -119,19 +124,21 @@ class _MainApp extends State<MainApp> {
             child: SignInScreen(
               providers: [
                 EmailAuthProvider(),
-                GoogleProvider(clientId: googleClientId)
+                GoogleProvider(clientId: googleClientId, scopes: ['email']),
               ],
               actions: [
                 AuthStateChangeAction<UserCreated>((context, state) {
                   User user = state.credential.user!;
                   setState(() {
                     context.read<UserBloc>().add(SetUserData(
-                        user: UserModel(
-                            id: user.uid,
-                            name: user.displayName ?? '',
-                            email: user.email!,
-                            image: user.photoURL,
-                            balance: 0)));
+                      user: UserModel(
+                        id: user.uid,
+                        name: user.displayName ?? '',
+                        email: user.email!,
+                        image: user.photoURL,
+                        balance: 0,
+                      ),
+                    ));
                   });
                   Navigator.popAndPushNamed(context, '/sign-in');
                 }),

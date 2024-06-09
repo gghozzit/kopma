@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:kopma/bloc/user_bloc/user_bloc.dart';
 import 'package:kopma/data/model/item/item_model.dart';
 
@@ -10,7 +11,7 @@ import '../bloc/detail_item_bloc/detail_item_bloc.dart';
 class CheckoutPage extends StatefulWidget {
   final ItemModel item;
 
-  const CheckoutPage({super.key, required this.item});
+  const CheckoutPage({Key? key, required this.item}) : super(key: key);
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -48,6 +49,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currencyFormat =
+    NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+
     return Scaffold(
       appBar: AppBar(),
       body: BlocListener<DetailItemBloc, DetailItemState>(
@@ -69,77 +73,161 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
             return SingleChildScrollView(
+              padding: EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Card(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: widget.item.image,
-                          width: 160,
-                        ),
-                        Column(
-                          children: [
-                            Text(widget.item.name),
-                            Text(widget.item.price.toString()),
-                            Card(
-                              elevation: 4,
-                              child: Row(
-                                children: [
-                                  TextButton(
-                                    onPressed: _decrementCounter,
-                                    child: const Text("-"),
-                                  ),
-                                  Text(_quantity.toString()),
-                                  TextButton(
-                                    onPressed: _incrementCounter,
-                                    child: const Text("+"),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Card(
+                    elevation: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text("Penjual"),
-                        Text(widget.item.sellerName ?? ""),
-                        Text(widget.item.sellerEmail ?? ""),
-                        Text(widget.item.sellerAddress ?? ""),
-                        const Text("Pembeli"),
-                        Text(state.user?.name ?? ""),
-                        Text(state.user?.address ?? ""),
+                        CachedNetworkImage(
+                          imageUrl: widget.item.image,
+                          fit: BoxFit.cover,
+                          height: 200,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.item.name,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                widget.item.description,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Harga:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    currencyFormat.format(widget.item.price),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Jumlah:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: _decrementCounter,
+                                        icon: Icon(Icons.remove),
+                                      ),
+                                      Text(_quantity.toString()),
+                                      IconButton(
+                                        onPressed: _incrementCounter,
+                                        icon: Icon(Icons.add),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                  SizedBox(height: 16),
                   Card(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            const Text("Total Harga"),
-                            Text(_totalPrice.toString()),
-                          ],
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            context.read<DetailItemBloc>().add(
-                              BuyItem(
-                                itemId: widget.item.id!,
-                                quantity: _quantity,
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Penjual:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(widget.item.sellerName ?? ''),
+                          Text(widget.item.sellerEmail ?? ''),
+                          Text(widget.item.sellerAddress ?? ''),
+                          SizedBox(height: 16),
+                          Text(
+                            'Pembeli:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(state.user?.name ?? ''),
+                          Text(state.user?.address ?? ''),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Total Harga:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            );
-                          },
-                          child: const Text("Bayar"),
-                        ),
-                      ],
+                              SizedBox(height: 8),
+                              Text(
+                                currencyFormat.format(_totalPrice),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<DetailItemBloc>().add(
+                                BuyItem(
+                                  itemId: widget.item.id!,
+                                  quantity: _quantity,
+                                ),
+                              );
+                            },
+                            child: Text('Bayar'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

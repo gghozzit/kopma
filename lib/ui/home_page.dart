@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:kopma/bloc/item_bloc/item_bloc.dart';
 import 'package:kopma/data/model/item/item_entity.dart';
 import 'package:kopma/ui/detail_item_page.dart';
@@ -9,9 +10,7 @@ import 'package:kopma/ui/post_item_page.dart';
 import '../data/model/item/item_model.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-  });
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -27,6 +26,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('List Produk Dijual'),
+        centerTitle: true,
+      ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add item',
         onPressed: () {
@@ -38,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: BlocListener<ItemBloc, ItemState>(
         listener: (context, state) {
-          if(state is UploadItemSuccess) {
+          if (state is UploadItemSuccess) {
             context.read<ItemBloc>().add(const GetListItems(query: ""));
           }
         },
@@ -48,23 +51,22 @@ class _HomePageState extends State<HomePage> {
               query: state.listItem,
               builder: (context, snapshot, _) {
                 if (snapshot.isFetching) {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Text('Something went wrong! ${snapshot.error}');
+                  return Center(child: Text('Something went wrong! ${snapshot.error}'));
                 }
                 return GridView.builder(
+                  padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.6
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.7,
                   ),
                   itemCount: snapshot.docs.length,
                   itemBuilder: (context, index) {
-                    // if we reached the end of the currently obtained items, we try to
-                    // obtain more items
                     if (snapshot.hasMore && index + 1 == snapshot.docs.length) {
-                      // Tell FirestoreQueryBuilder to try to obtain more items.
-                      // It is safe to call this function from within the build method.
                       snapshot.fetchMore();
                     }
 
@@ -76,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               },
             );
           } else {
-            return const Text('Error Wahai Rakyat Indonesia');
+            return const Center(child: Text('Error'));
           }
         }),
       ),
@@ -87,49 +89,66 @@ class _HomePageState extends State<HomePage> {
 class ItemWidget extends StatelessWidget {
   final ItemModel item;
 
-  const ItemWidget({super.key, required this.item});
+  const ItemWidget({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+
+    return GestureDetector(
       onTap: () {
-        if (item.id != null) {
-          if (item.id!.isNotEmpty) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return DetailItemPage(idItem: item.id!);
-            }));
-          }
+        if (item.id != null && item.id!.isNotEmpty) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return DetailItemPage(idItem: item.id!);
+          }));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('ID item tidak valid')),
+          );
         }
       },
       child: Card(
-          margin: const EdgeInsets.all(8),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                CachedNetworkImage(
-                  imageUrl: item.image,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 4,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: item.image,
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => const SizedBox(
                   height: 180,
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-                const Padding(padding: EdgeInsets.all(4)),
-                Text(
-                  item.name,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 16.0, fontWeight: FontWeight.w600),
-                ),
-                const Padding(padding: EdgeInsets.all(4)),
-                Text(
-                  "Rp. ${item.price}",
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 14.0, fontWeight: FontWeight.w500),
-                ),
-              ],
+                errorWidget: (_, __, ___) => const Icon(Icons.error),
+              ),
             ),
-          )),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    currencyFormat.format(item.price),
+                    style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

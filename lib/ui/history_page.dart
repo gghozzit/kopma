@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import package intl untuk menggunakan NumberFormat
 import 'package:kopma/data/model/transaction/transaction_model.dart';
 
 import '../data/datasource/network/firebase_transaction_datasource.dart';
@@ -10,6 +11,9 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Riwayat Transaksi'),
+      ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: _dataSource.getListTransaction(null).snapshots(),
         builder: (context, snapshot) {
@@ -18,7 +22,7 @@ class HistoryPage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No transactions found'));
+            return Center(child: Text('Tidak ada transaksi'));
           } else {
             final transactions = snapshot.data!.docs.map((doc) {
               final data = doc.data()!;
@@ -43,39 +47,33 @@ class HistoryPage extends StatelessWidget {
               );
             }).toList();
 
+            // Buat objek NumberFormat untuk memformat nominal rupiah dengan tanda koma
+            final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp');
+
             return ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
                 return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: ListTile(
+                    leading: Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey[300],
+                      child: Image.network(transaction.itemImage, fit: BoxFit.cover),
+                    ),
+                    title: Text(
+                      transaction.itemName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.grey[300],
-                          child: Center(child: Image.network(transaction.itemImage, fit: BoxFit.cover)),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                transaction.itemName,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-                              ),
-                              Text('Penjual: ${transaction.sellerName}'),
-                              Text('Tanggal: ${transaction.dateTime}'),
-                              Text('Jumlah: ${transaction.itemQuantity}'),
-                              Text('Rp.${transaction.itemPrice}'),
-                            ],
-                          ),
-                        ),
-
+                      children: [
+                        Text('Penjual: ${transaction.sellerName}'),
+                        Text('Tanggal: ${DateFormat('dd MMMM yyyy').format(transaction.dateTime)}'),
+                        Text('Jumlah: ${transaction.itemQuantity}'),
+                        Text('Harga: ${currencyFormat.format(transaction.itemPrice)}'),
                       ],
                     ),
                   ),
