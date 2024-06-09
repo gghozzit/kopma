@@ -18,13 +18,20 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   int _quantity = 1;
-  int _totalPrice = 1;
+  late int _totalPrice;
+
+  @override
+  void initState() {
+    super.initState();
+    _totalPrice = widget.item.price;
+  }
 
   void _incrementCounter() {
     setState(() {
       if (_quantity < widget.item.quantity) {
         _quantity += 1;
         _totalPrice = _quantity * widget.item.price;
+        print('Incremented: quantity = $_quantity, totalPrice = $_totalPrice');
       }
     });
   }
@@ -34,35 +41,33 @@ class _CheckoutPageState extends State<CheckoutPage> {
       if (_quantity > 1) {
         _quantity -= 1;
         _totalPrice = _quantity * widget.item.price;
+        print('Decremented: quantity = $_quantity, totalPrice = $_totalPrice');
       }
     });
   }
 
   @override
-  void initState() {
-    super.initState();
-    _totalPrice = widget.item.price;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: BlocListener<DetailItemBloc, DetailItemState>(
-          listener: (context, state) {
-            if (state is BuyItemFailure) {
-              showOkAlertDialog(
-                  context: context,
-                  title: "Error",
-                  message: state.errorMessage);
-            } else if (state is BuyItemSuccess) {
-              showOkAlertDialog(
-                  context: context,
-                  title: "Success",
-                  message: "Congrats! Your order is on its way!");
-            }
-          },
-          child: BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+      appBar: AppBar(),
+      body: BlocListener<DetailItemBloc, DetailItemState>(
+        listener: (context, state) {
+          if (state is BuyItemFailure) {
+            showOkAlertDialog(
+              context: context,
+              title: "Error",
+              message: state.errorMessage,
+            );
+          } else if (state is BuyItemSuccess) {
+            showOkAlertDialog(
+              context: context,
+              title: "Success",
+              message: "Congrats! Your order is on its way!",
+            );
+          }
+        },
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -83,19 +88,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               child: Row(
                                 children: [
                                   TextButton(
-                                      onPressed: () {
-                                        _decrementCounter();
-                                      },
-                                      child: const Text("-")),
+                                    onPressed: _decrementCounter,
+                                    child: const Text("-"),
+                                  ),
                                   Text(_quantity.toString()),
                                   TextButton(
-                                      onPressed: () {
-                                        _incrementCounter();
-                                      },
-                                      child: const Text("+")),
+                                    onPressed: _incrementCounter,
+                                    child: const Text("+"),
+                                  ),
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ],
@@ -117,29 +120,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                   Card(
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
                           children: [
                             const Text("Total Price"),
-                            Text(_totalPrice.toString())
+                            Text(_totalPrice.toString()),
                           ],
                         ),
                         TextButton(
-                            onPressed: () {
-                              setState(() {
-                                context.read<DetailItemBloc>().add(BuyItem(
-                                    itemId: widget.item.id!,
-                                    quantity: _quantity));
-                              });
-                            },
-                            child: const Text("Pay Now"))
+                          onPressed: () {
+                            context.read<DetailItemBloc>().add(
+                              BuyItem(
+                                itemId: widget.item.id!,
+                                quantity: _quantity,
+                              ),
+                            );
+                          },
+                          child: const Text("Pay Now"),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
             );
-          }),
-        ));
+          },
+        ),
+      ),
+    );
   }
 }

@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
               },
             );
           } else {
-            return const Text('Error coy');
+            return const Text('Error Wahai Rakyat Indonesia');
           }
         }),
       ),

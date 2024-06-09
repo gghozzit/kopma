@@ -93,7 +93,7 @@ class _DetailItemPageState extends State<DetailItemPage> {
                             ),
                           ),
                           Text('(' + (state.item?.category ?? "") + ')'),
-                          Text('IDR ' +
+                          Text('Rp.' +
                               (state.item?.price.toString() ?? ""),
                             style: TextStyle(
                                 color: Colors.black,
@@ -107,7 +107,7 @@ class _DetailItemPageState extends State<DetailItemPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Description",
+                            "Deskripsi",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -143,9 +143,9 @@ class _DetailItemPageState extends State<DetailItemPage> {
                                 });
                               },
                               icon: const Icon(Icons.trolley),
-                              label: const Text("Add to cart")),
+                              label: const Text("Masukkan Keranjang")),
                           const Padding(
-                              padding: EdgeInsets.only(left: 4, right: 4)),
+                              padding: EdgeInsets.only(left: 5, right: 5)),
                           Expanded(
                               child: FilledButton(
                                 onPressed: () {
@@ -155,7 +155,7 @@ class _DetailItemPageState extends State<DetailItemPage> {
                                             item: state.item ?? ItemModel.empty);
                                       }));
                                 },
-                                child: const Text("Buy Now"),
+                                child: const Text("Beli"),
                               )),
                         ],
                       ),

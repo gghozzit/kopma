@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       balance: (user.balance ?? 0) + 10000)));
                             },
                           ),
-                          const Text('Top Up'),
+                          const Text('Isi Saldo'),
                           const Padding(padding: EdgeInsets.all(4.0)),
                         ],
                       ),
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       });
                     },
                     icon: const Icon(Icons.save),
-                    label: const Text("Save"))
+                    label: const Text("Simpan Alamat"))
               ],
             );
           },

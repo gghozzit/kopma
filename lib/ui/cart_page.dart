@@ -25,18 +25,14 @@ class _CartPageState extends State<CartPage> {
     _fetchCartItems();
   }
 
-  void _fetchCartItems() async {
+  Future<void> _fetchCartItems() async {
     try {
       List<ItemModel> items = await cartDataSource.getListItemFromCart();
       setState(() {
         cartItems = items;
+        totalPricesPerItem = items.map((item) => item.quantity * item.price).toList();
         isLoading = false;
       });
-
-      for (var item in items) {
-        int totalPricePerItem = item.quantity * item.price;
-        totalPricesPerItem.add(totalPricePerItem);
-      }
     } catch (e) {
       log('Error fetching cart items: $e');
       setState(() {
@@ -46,14 +42,13 @@ class _CartPageState extends State<CartPage> {
   }
 
   int _calculateTotalPrice() {
-    if (totalPricesPerItem.isEmpty) return 0;
-    return totalPricesPerItem.reduce((sum, element) => sum + element);
+    return totalPricesPerItem.isEmpty ? 0 : totalPricesPerItem.reduce((sum, element) => sum + element);
   }
 
-  void _totalCartPriceRefresh() {
-    _calculateTotalPrice();
-    totalPricesPerItem.clear();
-    _fetchCartItems();
+  void _updateTotalPrice() {
+    setState(() {
+      totalPricesPerItem = cartItems.map((item) => item.quantity * item.price).toList();
+    });
   }
 
   Future<void> _incrementQuantity(int index, String? itemIdFirebase) async {
@@ -61,12 +56,12 @@ class _CartPageState extends State<CartPage> {
     final newQuantity = item.quantity + 1;
 
     setState(() {
-      cartItems[index] = item.copyWith(quantity: newQuantity, itemId: item.itemId);
+      cartItems[index] = item.copyWith(quantity: newQuantity);
+      totalPricesPerItem[index] = newQuantity * item.price;
     });
 
-    cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
-    await Future.delayed(Duration(milliseconds: 100));
-    _totalCartPriceRefresh();
+    await cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
+    _updateTotalPrice();
   }
 
   Future<void> _decrementQuantity(int index, String? itemIdFirebase) async {
@@ -75,34 +70,39 @@ class _CartPageState extends State<CartPage> {
       final newQuantity = item.quantity - 1;
 
       setState(() {
-        cartItems[index] = item.copyWith(quantity: newQuantity, itemId: item.itemId);
+        cartItems[index] = item.copyWith(quantity: newQuantity);
+        totalPricesPerItem[index] = newQuantity * item.price;
       });
 
-      cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
-      await Future.delayed(const Duration(milliseconds: 100));
-      _totalCartPriceRefresh();
+      await cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
+      _updateTotalPrice();
     }
   }
 
-  Future<void> _deleteItem(String itemId) async {
-    cartDataSource.deleteItemFromCart(itemId);
-    await Future.delayed(const Duration(milliseconds: 100));
-    _totalCartPriceRefresh();
+  Future<void> _deleteItem(int index, String itemId) async {
+    try {
+      await cartDataSource.deleteItemFromCart(itemId);
+      setState(() {
+        cartItems.removeAt(index);
+        totalPricesPerItem.removeAt(index);
+        _updateTotalPrice();
+      });
+    } catch (e) {
+      log('Error deleting item: $e');
+    }
   }
 
   Future<void> _buyItem(BuildContext context, String? itemIdIsar, String? itemId, int quantity) async {
     bool success = await cartDataSource.buyItemFromCart(context, itemIdIsar!, itemId!, quantity);
     if (success) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      _totalCartPriceRefresh();
+      _fetchCartItems();
     }
   }
 
-  Future <void> _buyAllItems(BuildContext context, List<ItemModel> cartItems, int totalPrice) async {
+  Future<void> _buyAllItems(BuildContext context, List<ItemModel> cartItems, int totalPrice) async {
     bool success = await cartDataSource.batchBuyItem(context, cartItems, totalPrice);
     if (success) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      _totalCartPriceRefresh();
+      _fetchCartItems();
     }
   }
 
@@ -111,12 +111,12 @@ class _CartPageState extends State<CartPage> {
     int totalPrice = _calculateTotalPrice();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text('Keranjang'),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : cartItems.isEmpty
-          ? const Center(child: Text('Cart is empty'))
+          ? const Center(child: Text('Keranjang Kosong'))
           : Column(
         children: [
           Expanded(
@@ -162,7 +162,7 @@ class _CartPageState extends State<CartPage> {
                                           fontSize: 18.0,
                                         ),
                                       ),
-                                      Text('Seller: ${item.sellerName}'),
+                                      Text('Penjual: ${item.sellerName}'),
                                       Row(
                                         children: <Widget>[
                                           IconButton(
@@ -176,7 +176,7 @@ class _CartPageState extends State<CartPage> {
                                           ),
                                         ],
                                       ),
-                                      Text('Rp.${item.price}'),
+                                      Text('Harga @ Rp.${item.price}'),
                                       Text('Total: Rp.${item.price * item.quantity}'),
                                     ],
                                   ),
@@ -187,9 +187,9 @@ class _CartPageState extends State<CartPage> {
                               top: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: Colors.blueGrey),
                                 onPressed: () {
-                                  _deleteItem(item.id.toString());
+                                  _deleteItem(index, item.id.toString());
                                 },
                               ),
                             ),
@@ -220,14 +220,14 @@ class _CartPageState extends State<CartPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total Price: Rp.$totalPrice',
+                    'Harga Total : Rp.$totalPrice',
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       _buyAllItems(context, cartItems, totalPrice);
                     },
-                    child: const Text('Buy All'),
+                    child: const Text('Beli Semua'),
                   ),
                 ],
               ),

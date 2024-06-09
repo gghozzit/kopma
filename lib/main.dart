@@ -99,11 +99,11 @@ class _MainApp extends State<MainApp> {
               padding: MaterialStateProperty.all<EdgeInsets>(
                 const EdgeInsets.all(8),
               ),
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.amber),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey),
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
           ),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
           useMaterial3: true),
       localizationsDelegates: const [
         DefaultMaterialLocalizations.delegate,

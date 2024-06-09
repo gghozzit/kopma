@@ -46,7 +46,7 @@ class _PostItemPageState extends State<PostItemPage> {
         "https://via.assets.so/img.jpg?w=800&h=800&tc=&bg=#cecece&t=Image";
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Upload Item"),
+        title: const Text("Jual Barang"),
       ),
       body: BlocListener<ItemBloc, ItemState>(
         listener: (context, state) {
@@ -93,10 +93,10 @@ class _PostItemPageState extends State<PostItemPage> {
                           file: File(images!.path), fileName: images.name));
                     }
                   },
-                  icon: const Icon(Icons.image)),
+                  icon: const Icon(Icons.add_a_photo_rounded)),
               MyTextField(
                   controller: nameController,
-                  hintText: 'Item\'s name',
+                  hintText: 'Nama Barang',
                   obscureText: false,
                   keyboardType: TextInputType.name,
                   validator: (val) {
@@ -108,7 +108,7 @@ class _PostItemPageState extends State<PostItemPage> {
               const Padding(padding: EdgeInsets.all(4)),
               MyTextField(
                   controller: descriptionController,
-                  hintText: 'Item\'s description',
+                  hintText: 'Deskripsi Barang',
                   maxLines: 4,
                   obscureText: false,
                   textInputAction: TextInputAction.newline,
@@ -144,7 +144,7 @@ class _PostItemPageState extends State<PostItemPage> {
                 children: [
                   MyTextField(
                       controller: quantityController,
-                      hintText: 'Item\'s quantity',
+                      hintText: 'Stok Barang',
                       obscureText: false,
                       keyboardType: TextInputType.number,
                       validator: (val) {
@@ -156,7 +156,7 @@ class _PostItemPageState extends State<PostItemPage> {
                   const Padding(padding: EdgeInsets.all(4)),
                   MyTextField(
                       controller: priceController,
-                      hintText: 'Item\'s price',
+                      hintText: 'Harga Barang Perunit',
                       obscureText: false,
                       textInputAction: TextInputAction.done,
                       keyboardType:
@@ -181,8 +181,8 @@ class _PostItemPageState extends State<PostItemPage> {
                                   price: int.parse(priceController.text))));
                         });
                       },
-                      icon: const Icon(Icons.upload),
-                      label: const Text("Upload item"))
+                      icon: const Icon(Icons.add_business_rounded),
+                      label: const Text("Jual Barang"))
                 ],
               ),
             ],

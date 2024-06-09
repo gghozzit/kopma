@@ -48,7 +48,7 @@ class _MainPageState extends State<MainPage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kopma'),
+        title: const Text('KOPMA'),
         actions:  <Widget>[
           IconButton(
             icon: const Icon(Icons.shopping_cart,),
@@ -64,23 +64,23 @@ class _MainPageState extends State<MainPage> {
       body: widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 34,
-        selectedItemColor: Colors.green,
+        selectedItemColor: Colors.grey[800],
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-        unselectedItemColor: Colors.deepOrangeAccent,
+        unselectedItemColor: Colors.grey[400],
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         showUnselectedLabels: true,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'Beranda',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
-            label: 'History',
+            label: 'Riwayat Transaksi',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Akun',
           ),
         ],
         type: BottomNavigationBarType.fixed,
