@@ -61,8 +61,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
           } else if (state is BuyItemSuccess) {
             showOkAlertDialog(
               context: context,
-              title: "Success",
-              message: "Congrats! Your order is on its way!",
+              title: "Pembelian Berhasil",
+              message: "Barangmu Sedang dalam Perjalanan",
             );
           }
         },
@@ -108,11 +108,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text("From"),
+                        const Text("Penjual"),
                         Text(widget.item.sellerName ?? ""),
                         Text(widget.item.sellerEmail ?? ""),
                         Text(widget.item.sellerAddress ?? ""),
-                        const Text("To"),
+                        const Text("Pembeli"),
                         Text(state.user?.name ?? ""),
                         Text(state.user?.address ?? ""),
                       ],
@@ -124,7 +124,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       children: [
                         Column(
                           children: [
-                            const Text("Total Price"),
+                            const Text("Total Harga"),
                             Text(_totalPrice.toString()),
                           ],
                         ),
@@ -137,7 +137,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               ),
                             );
                           },
-                          child: const Text("Pay Now"),
+                          child: const Text("Bayar"),
                         ),
                       ],
                     ),

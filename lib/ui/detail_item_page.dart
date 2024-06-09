@@ -41,9 +41,9 @@ class _DetailItemPageState extends State<DetailItemPage> {
           } else if (state is AddItemToCartSuccess) {
             showOkAlertDialog(
                 context: context,
-                title: "Success",
+                title: "Masuk Keranjang",
                 message:
-                "Nailed it! ${state.item?.name} is chilling in your cart.");
+                "Alhamdulillah ${state.item?.name} sudah masuk keranjang.");
             context
                 .read<DetailItemBloc>()
                 .add(GetDetailItem(itemId: widget.idItem));
