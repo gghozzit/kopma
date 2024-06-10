@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../data/datasource/local/local_cart_datasource.dart';
@@ -15,7 +14,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  LocalCartDataSource cartDataSource = LocalCartDataSource(FirebaseItemDataSource());
+  LocalCartDataSource cartDataSource =
+  LocalCartDataSource(FirebaseItemDataSource());
   List<ItemModel> cartItems = [];
   bool isLoading = true;
   List<int> totalPricesPerItem = [];
@@ -31,7 +31,8 @@ class _CartPageState extends State<CartPage> {
       List<ItemModel> items = await cartDataSource.getListItemFromCart();
       setState(() {
         cartItems = items;
-        totalPricesPerItem = items.map((item) => item.quantity * item.price).toList();
+        totalPricesPerItem =
+            items.map((item) => item.quantity * item.price).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -43,12 +44,15 @@ class _CartPageState extends State<CartPage> {
   }
 
   int _calculateTotalPrice() {
-    return totalPricesPerItem.isEmpty ? 0 : totalPricesPerItem.reduce((sum, element) => sum + element);
+    return totalPricesPerItem.isEmpty
+        ? 0
+        : totalPricesPerItem.reduce((sum, element) => sum + element);
   }
 
   void _updateTotalPrice() {
     setState(() {
-      totalPricesPerItem = cartItems.map((item) => item.quantity * item.price).toList();
+      totalPricesPerItem =
+          cartItems.map((item) => item.quantity * item.price).toList();
     });
   }
 
@@ -61,7 +65,8 @@ class _CartPageState extends State<CartPage> {
       totalPricesPerItem[index] = newQuantity * item.price;
     });
 
-    await cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
+    await cartDataSource.updateItemQuantity(
+        item.id, itemIdFirebase!, newQuantity);
     _updateTotalPrice();
   }
 
@@ -75,35 +80,45 @@ class _CartPageState extends State<CartPage> {
         totalPricesPerItem[index] = newQuantity * item.price;
       });
 
-      await cartDataSource.updateItemQuantity(item.id, itemIdFirebase!, newQuantity);
+      await cartDataSource.updateItemQuantity(
+          item.id, itemIdFirebase!, newQuantity);
       _updateTotalPrice();
     }
   }
 
-  Future<void> _deleteItem(int index, String itemId) async {
-    try {
-      await cartDataSource.deleteItemFromCart(itemId);
-      setState(() {
-        cartItems.removeAt(index);
-        totalPricesPerItem.removeAt(index);
-        _updateTotalPrice();
-      });
-    } catch (e) {
-      log('Error deleting item: $e');
-    }
-  }
-
-  Future<void> _buyItem(BuildContext context, String? itemIdIsar, String? itemId, int quantity) async {
-    bool success = await cartDataSource.buyItemFromCart(context, itemIdIsar!, itemId!, quantity);
+  Future<void> _buyItem(
+      BuildContext context, String? itemIdIsar, String? itemId, int quantity) async {
+    bool success =
+    await cartDataSource.buyItemFromCart(context, itemIdIsar!, itemId!, quantity);
     if (success) {
       _fetchCartItems();
     }
   }
 
-  Future<void> _buyAllItems(BuildContext context, List<ItemModel> cartItems, int totalPrice) async {
-    bool success = await cartDataSource.batchBuyItem(context, cartItems, totalPrice);
+  Future<void> _buyAllItems(
+      BuildContext context, List<ItemModel> cartItems, int totalPrice) async {
+    bool success =
+    await cartDataSource.batchBuyItem(context, cartItems, totalPrice);
     if (success) {
       _fetchCartItems();
+    }
+  }
+
+  Future<void> _deleteItemFromCart(String? itemIdIsar) async {
+    if (itemIdIsar != null && itemIdIsar.isNotEmpty) {
+      try {
+        bool success = await cartDataSource.deleteItemFromCart(itemIdIsar);
+        if (success) {
+          _fetchCartItems();
+        } else {
+          // Handle case when deletion was not successful
+        }
+      } catch (e) {
+        log('Error deleting item from cart: $e');
+        // Handle error condition
+      }
+    } else {
+      log('Error deleting item from cart: itemIdIsar is empty or null');
     }
   }
 
@@ -120,33 +135,15 @@ class _CartPageState extends State<CartPage> {
           ? const Center(child: CircularProgressIndicator())
           : cartItems.isEmpty
           ? const Center(child: Text('Keranjang Kosong'))
-          : Column(
-        children: [
-      Expanded(
-      child: ListView.builder(
-      itemCount: cartItems.length,
+          : ListView.builder(
+        itemCount: cartItems.length,
         itemBuilder: (context, index) {
           final item = cartItems[index];
           return Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Card(
               elevation: 4,
               child: ListTile(
-                onTap: () {
-                  if (item.itemId != null && item.itemId!.isNotEmpty) {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      return DetailItemPage(idItem: item.itemId!);
-                    }));
-                  }
-                },
-                leading: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                  ),
-                  child: item.image.isNotEmpty ? Image.network(item.image) : const Center(child: Text('No image')),
-                ),
                 title: Text(
                   item.name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -154,17 +151,52 @@ class _CartPageState extends State<CartPage> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[300],
+                      child: item.image.isNotEmpty
+                          ? Image.network(
+                        item.image,
+                        fit: BoxFit.cover,
+                      )
+                          : const Center(child: Text('No image')),
+                    ),
+                    SizedBox(height: 8),
                     Text('Penjual: ${item.sellerName}'),
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () => _decrementQuantity(index, item.itemId),
+                          onPressed: () =>
+                              _decrementQuantity(index, item.itemId),
                           icon: const Icon(Icons.remove),
                         ),
                         Text(item.quantity.toString()),
                         IconButton(
-                          onPressed: () => _incrementQuantity(index, item.itemId),
+                          onPressed: () =>
+                              _incrementQuantity(index, item.itemId),
                           icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _buyItem(
+                              context,
+                              item.id,
+                              item.itemId,
+                              item.quantity,
+                            );
+                          },
+                          child: const Text('Beli'),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _deleteItemFromCart(item.id);
+                          },
+                          icon: const Icon(Icons.delete),
                         ),
                       ],
                     ),
@@ -172,40 +204,32 @@ class _CartPageState extends State<CartPage> {
                     Text('Total: ${currencyFormat.format(item.price * item.quantity)}'),
                   ],
                 ),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    _buyItem(context, item.id, item.itemId, item.quantity);
-                  },
-                  child: const Text('Beli'),
-                ),
               ),
             ),
           );
         },
       ),
-    ),
-    Card(
-    margin: const EdgeInsets.all(8.0),
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Harga Total : ${currencyFormat.format(totalPrice)}', // Format nominal rupiah
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      bottomNavigationBar: Card(
+        margin: const EdgeInsets.all(8.0),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Harga Total : ${currencyFormat.format(totalPrice)}', // Format nominal rupiah
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _buyAllItems(context, cartItems, totalPrice);
+                },
+                child: const Text('Beli Semua'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              _buyAllItems(context, cartItems, totalPrice);
-            },
-            child: const Text('Beli Semua'),
-          ),
-        ],
-      ),
-    ),
-    ),
-        ],
+        ),
       ),
     );
   }

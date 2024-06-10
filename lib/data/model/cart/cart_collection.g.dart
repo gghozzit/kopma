@@ -93,10 +93,10 @@ const CartCollectionSchema = CollectionSchema(
 );
 
 int _cartCollectionEstimateSize(
-    CartCollection object,
-    List<int> offsets,
-    Map<Type, List<int>> allOffsets,
-    ) {
+  CartCollection object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.category.length * 3;
   bytesCount += 3 + object.description.length * 3;
@@ -142,11 +142,11 @@ int _cartCollectionEstimateSize(
 }
 
 void _cartCollectionSerialize(
-    CartCollection object,
-    IsarWriter writer,
-    List<int> offsets,
-    Map<Type, List<int>> allOffsets,
-    ) {
+  CartCollection object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   writer.writeString(offsets[0], object.category);
   writer.writeString(offsets[1], object.description);
   writer.writeString(offsets[2], object.image);
@@ -162,14 +162,15 @@ void _cartCollectionSerialize(
 }
 
 CartCollection _cartCollectionDeserialize(
-    Id id,
-    IsarReader reader,
-    List<int> offsets,
-    Map<Type, List<int>> allOffsets,
-    ) {
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   final object = CartCollection(
     category: reader.readString(offsets[0]),
     description: reader.readString(offsets[1]),
+    id: id,
     image: reader.readString(offsets[2]),
     itemId: reader.readStringOrNull(offsets[3]),
     name: reader.readString(offsets[4]),
@@ -185,11 +186,11 @@ CartCollection _cartCollectionDeserialize(
 }
 
 P _cartCollectionDeserializeProp<P>(
-    IsarReader reader,
-    int propertyId,
-    int offset,
-    Map<Type, List<int>> allOffsets,
-    ) {
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
   switch (propertyId) {
     case 0:
       return (reader.readString(offset)) as P;
@@ -229,10 +230,12 @@ List<IsarLinkBase<dynamic>> _cartCollectionGetLinks(CartCollection object) {
 }
 
 void _cartCollectionAttach(
-    IsarCollection<dynamic> col, Id id, CartCollection object) {}
+    IsarCollection<dynamic> col, Id id, CartCollection object) {
+  object.id = id;
+}
 
 extension CartCollectionQueryWhereSort
-on QueryBuilder<CartCollection, CartCollection, QWhere> {
+    on QueryBuilder<CartCollection, CartCollection, QWhere> {
   QueryBuilder<CartCollection, CartCollection, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -241,7 +244,7 @@ on QueryBuilder<CartCollection, CartCollection, QWhere> {
 }
 
 extension CartCollectionQueryWhere
-on QueryBuilder<CartCollection, CartCollection, QWhereClause> {
+    on QueryBuilder<CartCollection, CartCollection, QWhereClause> {
   QueryBuilder<CartCollection, CartCollection, QAfterWhereClause> idEqualTo(
       Id id) {
     return QueryBuilder.apply(this, (query) {
@@ -258,19 +261,19 @@ on QueryBuilder<CartCollection, CartCollection, QWhereClause> {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
-          IdWhereClause.lessThan(upper: id, includeUpper: false),
-        )
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
             .addWhereClause(
-          IdWhereClause.greaterThan(lower: id, includeLower: false),
-        );
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
       } else {
         return query
             .addWhereClause(
-          IdWhereClause.greaterThan(lower: id, includeLower: false),
-        )
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
             .addWhereClause(
-          IdWhereClause.lessThan(upper: id, includeUpper: false),
-        );
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
       }
     });
   }
@@ -296,11 +299,11 @@ on QueryBuilder<CartCollection, CartCollection, QWhereClause> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterWhereClause> idBetween(
-      Id lowerId,
-      Id upperId, {
-        bool includeLower = true,
-        bool includeUpper = true,
-      }) {
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: lowerId,
@@ -313,12 +316,12 @@ on QueryBuilder<CartCollection, CartCollection, QWhereClause> {
 }
 
 extension CartCollectionQueryFilter
-on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
+    on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryEqualTo(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      categoryEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'category',
@@ -329,11 +332,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryGreaterThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      categoryGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -345,11 +348,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryLessThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      categoryLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -361,13 +364,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryBetween(
-      String lower,
-      String upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      categoryBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'category',
@@ -381,10 +384,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      categoryStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'category',
@@ -395,10 +398,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      categoryEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'category',
@@ -409,7 +412,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryContains(String value, {bool caseSensitive = true}) {
+      categoryContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'category',
@@ -420,7 +423,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryMatches(String pattern, {bool caseSensitive = true}) {
+      categoryMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'category',
@@ -431,7 +434,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryIsEmpty() {
+      categoryIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'category',
@@ -441,7 +444,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  categoryIsNotEmpty() {
+      categoryIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'category',
@@ -451,10 +454,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionEqualTo(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      descriptionEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -465,11 +468,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionGreaterThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      descriptionGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -481,11 +484,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionLessThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      descriptionLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -497,13 +500,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionBetween(
-      String lower,
-      String upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      descriptionBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'description',
@@ -517,10 +520,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      descriptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'description',
@@ -531,10 +534,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      descriptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'description',
@@ -545,7 +548,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionContains(String value, {bool caseSensitive = true}) {
+      descriptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'description',
@@ -556,7 +559,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionMatches(String pattern, {bool caseSensitive = true}) {
+      descriptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'description',
@@ -567,7 +570,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionIsEmpty() {
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -577,17 +580,35 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  descriptionIsNotEmpty() {
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
+      idIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'id',
+      ));
+    });
+  }
+
+  QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
+      idIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'id',
       ));
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition> idEqualTo(
-      Id value) {
+      Id? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -597,10 +618,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  idGreaterThan(
-      Id value, {
-        bool include = false,
-      }) {
+      idGreaterThan(
+    Id? value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -611,10 +632,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  idLessThan(
-      Id value, {
-        bool include = false,
-      }) {
+      idLessThan(
+    Id? value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -625,11 +646,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition> idBetween(
-      Id lower,
-      Id upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-      }) {
+    Id? lower,
+    Id? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
@@ -642,10 +663,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageEqualTo(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      imageEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'image',
@@ -656,11 +677,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageGreaterThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      imageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -672,11 +693,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageLessThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      imageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -688,13 +709,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageBetween(
-      String lower,
-      String upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      imageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'image',
@@ -708,10 +729,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      imageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'image',
@@ -722,10 +743,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      imageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'image',
@@ -736,7 +757,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageContains(String value, {bool caseSensitive = true}) {
+      imageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'image',
@@ -747,7 +768,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageMatches(String pattern, {bool caseSensitive = true}) {
+      imageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'image',
@@ -758,7 +779,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageIsEmpty() {
+      imageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'image',
@@ -768,7 +789,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  imageIsNotEmpty() {
+      imageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'image',
@@ -778,7 +799,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdIsNull() {
+      itemIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'itemId',
@@ -787,7 +808,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdIsNotNull() {
+      itemIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'itemId',
@@ -796,10 +817,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      itemIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'itemId',
@@ -810,11 +831,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      itemIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -826,11 +847,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      itemIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -842,13 +863,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      itemIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'itemId',
@@ -862,10 +883,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      itemIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'itemId',
@@ -876,10 +897,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      itemIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'itemId',
@@ -890,7 +911,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdContains(String value, {bool caseSensitive = true}) {
+      itemIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'itemId',
@@ -901,7 +922,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdMatches(String pattern, {bool caseSensitive = true}) {
+      itemIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'itemId',
@@ -912,7 +933,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdIsEmpty() {
+      itemIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'itemId',
@@ -922,7 +943,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  itemIdIsNotEmpty() {
+      itemIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'itemId',
@@ -932,10 +953,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameEqualTo(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      nameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -946,11 +967,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameGreaterThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      nameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -962,11 +983,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameLessThan(
-      String value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      nameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -978,13 +999,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameBetween(
-      String lower,
-      String upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      nameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'name',
@@ -998,10 +1019,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      nameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'name',
@@ -1012,10 +1033,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      nameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'name',
@@ -1026,7 +1047,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameContains(String value, {bool caseSensitive = true}) {
+      nameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'name',
@@ -1037,7 +1058,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameMatches(String pattern, {bool caseSensitive = true}) {
+      nameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'name',
@@ -1048,7 +1069,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameIsEmpty() {
+      nameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'name',
@@ -1058,7 +1079,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  nameIsNotEmpty() {
+      nameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'name',
@@ -1068,7 +1089,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  priceEqualTo(int value) {
+      priceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'price',
@@ -1078,10 +1099,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  priceGreaterThan(
-      int value, {
-        bool include = false,
-      }) {
+      priceGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1092,10 +1113,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  priceLessThan(
-      int value, {
-        bool include = false,
-      }) {
+      priceLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1106,12 +1127,12 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  priceBetween(
-      int lower,
-      int upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-      }) {
+      priceBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'price',
@@ -1124,7 +1145,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  quantityEqualTo(int value) {
+      quantityEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'quantity',
@@ -1134,10 +1155,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  quantityGreaterThan(
-      int value, {
-        bool include = false,
-      }) {
+      quantityGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1148,10 +1169,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  quantityLessThan(
-      int value, {
-        bool include = false,
-      }) {
+      quantityLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1162,12 +1183,12 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  quantityBetween(
-      int lower,
-      int upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-      }) {
+      quantityBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'quantity',
@@ -1180,7 +1201,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressIsNull() {
+      sellerAddressIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sellerAddress',
@@ -1189,7 +1210,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressIsNotNull() {
+      sellerAddressIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sellerAddress',
@@ -1198,10 +1219,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      sellerAddressEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerAddress',
@@ -1212,11 +1233,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerAddressGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1228,11 +1249,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerAddressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1244,13 +1265,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      sellerAddressBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'sellerAddress',
@@ -1264,10 +1285,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerAddressStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'sellerAddress',
@@ -1278,10 +1299,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerAddressEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'sellerAddress',
@@ -1292,7 +1313,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressContains(String value, {bool caseSensitive = true}) {
+      sellerAddressContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sellerAddress',
@@ -1303,7 +1324,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressMatches(String pattern, {bool caseSensitive = true}) {
+      sellerAddressMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sellerAddress',
@@ -1314,7 +1335,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressIsEmpty() {
+      sellerAddressIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerAddress',
@@ -1324,7 +1345,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerAddressIsNotEmpty() {
+      sellerAddressIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sellerAddress',
@@ -1334,7 +1355,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailIsNull() {
+      sellerEmailIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sellerEmail',
@@ -1343,7 +1364,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailIsNotNull() {
+      sellerEmailIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sellerEmail',
@@ -1352,10 +1373,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      sellerEmailEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerEmail',
@@ -1366,11 +1387,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerEmailGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1382,11 +1403,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerEmailLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1398,13 +1419,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      sellerEmailBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'sellerEmail',
@@ -1418,10 +1439,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerEmailStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'sellerEmail',
@@ -1432,10 +1453,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerEmailEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'sellerEmail',
@@ -1446,7 +1467,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailContains(String value, {bool caseSensitive = true}) {
+      sellerEmailContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sellerEmail',
@@ -1457,7 +1478,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailMatches(String pattern, {bool caseSensitive = true}) {
+      sellerEmailMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sellerEmail',
@@ -1468,7 +1489,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailIsEmpty() {
+      sellerEmailIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerEmail',
@@ -1478,7 +1499,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerEmailIsNotEmpty() {
+      sellerEmailIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sellerEmail',
@@ -1488,7 +1509,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdIsNull() {
+      sellerIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sellerId',
@@ -1497,7 +1518,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdIsNotNull() {
+      sellerIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sellerId',
@@ -1506,10 +1527,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      sellerIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerId',
@@ -1520,11 +1541,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1536,11 +1557,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1552,13 +1573,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      sellerIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'sellerId',
@@ -1572,10 +1593,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'sellerId',
@@ -1586,10 +1607,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'sellerId',
@@ -1600,7 +1621,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdContains(String value, {bool caseSensitive = true}) {
+      sellerIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sellerId',
@@ -1611,7 +1632,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdMatches(String pattern, {bool caseSensitive = true}) {
+      sellerIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sellerId',
@@ -1622,7 +1643,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdIsEmpty() {
+      sellerIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerId',
@@ -1632,7 +1653,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerIdIsNotEmpty() {
+      sellerIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sellerId',
@@ -1642,7 +1663,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageIsNull() {
+      sellerImageIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sellerImage',
@@ -1651,7 +1672,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageIsNotNull() {
+      sellerImageIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sellerImage',
@@ -1660,10 +1681,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      sellerImageEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerImage',
@@ -1674,11 +1695,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerImageGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1690,11 +1711,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerImageLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1706,13 +1727,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      sellerImageBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'sellerImage',
@@ -1726,10 +1747,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerImageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'sellerImage',
@@ -1740,10 +1761,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerImageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'sellerImage',
@@ -1754,7 +1775,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageContains(String value, {bool caseSensitive = true}) {
+      sellerImageContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sellerImage',
@@ -1765,7 +1786,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageMatches(String pattern, {bool caseSensitive = true}) {
+      sellerImageMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sellerImage',
@@ -1776,7 +1797,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageIsEmpty() {
+      sellerImageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerImage',
@@ -1786,7 +1807,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerImageIsNotEmpty() {
+      sellerImageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sellerImage',
@@ -1796,7 +1817,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameIsNull() {
+      sellerNameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'sellerName',
@@ -1805,7 +1826,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameIsNotNull() {
+      sellerNameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'sellerName',
@@ -1814,10 +1835,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameEqualTo(
-      String? value, {
-        bool caseSensitive = true,
-      }) {
+      sellerNameEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerName',
@@ -1828,11 +1849,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameGreaterThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerNameGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
@@ -1844,11 +1865,11 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameLessThan(
-      String? value, {
-        bool include = false,
-        bool caseSensitive = true,
-      }) {
+      sellerNameLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
@@ -1860,13 +1881,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameBetween(
-      String? lower,
-      String? upper, {
-        bool includeLower = true,
-        bool includeUpper = true,
-        bool caseSensitive = true,
-      }) {
+      sellerNameBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'sellerName',
@@ -1880,10 +1901,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameStartsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.startsWith(
         property: r'sellerName',
@@ -1894,10 +1915,10 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameEndsWith(
-      String value, {
-        bool caseSensitive = true,
-      }) {
+      sellerNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.endsWith(
         property: r'sellerName',
@@ -1908,7 +1929,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameContains(String value, {bool caseSensitive = true}) {
+      sellerNameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
         property: r'sellerName',
@@ -1919,7 +1940,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameMatches(String pattern, {bool caseSensitive = true}) {
+      sellerNameMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
         property: r'sellerName',
@@ -1930,7 +1951,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameIsEmpty() {
+      sellerNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'sellerName',
@@ -1940,7 +1961,7 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterFilterCondition>
-  sellerNameIsNotEmpty() {
+      sellerNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'sellerName',
@@ -1951,13 +1972,13 @@ on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {
 }
 
 extension CartCollectionQueryObject
-on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {}
+    on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {}
 
 extension CartCollectionQueryLinks
-on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {}
+    on QueryBuilder<CartCollection, CartCollection, QFilterCondition> {}
 
 extension CartCollectionQuerySortBy
-on QueryBuilder<CartCollection, CartCollection, QSortBy> {
+    on QueryBuilder<CartCollection, CartCollection, QSortBy> {
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy> sortByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
@@ -1965,21 +1986,21 @@ on QueryBuilder<CartCollection, CartCollection, QSortBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortByCategoryDesc() {
+      sortByCategoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortByDescription() {
+      sortByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortByDescriptionDesc() {
+      sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -2004,7 +2025,7 @@ on QueryBuilder<CartCollection, CartCollection, QSortBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortByItemIdDesc() {
+      sortByItemIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemId', Sort.desc);
     });
@@ -2041,35 +2062,35 @@ on QueryBuilder<CartCollection, CartCollection, QSortBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortByQuantityDesc() {
+      sortByQuantityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerAddress() {
+      sortBySellerAddress() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerAddress', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerAddressDesc() {
+      sortBySellerAddressDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerAddress', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerEmail() {
+      sortBySellerEmail() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerEmail', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerEmailDesc() {
+      sortBySellerEmailDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerEmail', Sort.desc);
     });
@@ -2082,35 +2103,35 @@ on QueryBuilder<CartCollection, CartCollection, QSortBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerIdDesc() {
+      sortBySellerIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerId', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerImage() {
+      sortBySellerImage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerImage', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerImageDesc() {
+      sortBySellerImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerImage', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerName() {
+      sortBySellerName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerName', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  sortBySellerNameDesc() {
+      sortBySellerNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerName', Sort.desc);
     });
@@ -2118,7 +2139,7 @@ on QueryBuilder<CartCollection, CartCollection, QSortBy> {
 }
 
 extension CartCollectionQuerySortThenBy
-on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
+    on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy> thenByCategory() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.asc);
@@ -2126,21 +2147,21 @@ on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenByCategoryDesc() {
+      thenByCategoryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'category', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenByDescription() {
+      thenByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenByDescriptionDesc() {
+      thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
     });
@@ -2177,7 +2198,7 @@ on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenByItemIdDesc() {
+      thenByItemIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemId', Sort.desc);
     });
@@ -2214,35 +2235,35 @@ on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenByQuantityDesc() {
+      thenByQuantityDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'quantity', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerAddress() {
+      thenBySellerAddress() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerAddress', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerAddressDesc() {
+      thenBySellerAddressDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerAddress', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerEmail() {
+      thenBySellerEmail() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerEmail', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerEmailDesc() {
+      thenBySellerEmailDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerEmail', Sort.desc);
     });
@@ -2255,35 +2276,35 @@ on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerIdDesc() {
+      thenBySellerIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerId', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerImage() {
+      thenBySellerImage() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerImage', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerImageDesc() {
+      thenBySellerImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerImage', Sort.desc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerName() {
+      thenBySellerName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerName', Sort.asc);
     });
   }
 
   QueryBuilder<CartCollection, CartCollection, QAfterSortBy>
-  thenBySellerNameDesc() {
+      thenBySellerNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sellerName', Sort.desc);
     });
@@ -2291,7 +2312,7 @@ on QueryBuilder<CartCollection, CartCollection, QSortThenBy> {
 }
 
 extension CartCollectionQueryWhereDistinct
-on QueryBuilder<CartCollection, CartCollection, QDistinct> {
+    on QueryBuilder<CartCollection, CartCollection, QDistinct> {
   QueryBuilder<CartCollection, CartCollection, QDistinct> distinctByCategory(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2340,7 +2361,7 @@ on QueryBuilder<CartCollection, CartCollection, QDistinct> {
   }
 
   QueryBuilder<CartCollection, CartCollection, QDistinct>
-  distinctBySellerAddress({bool caseSensitive = true}) {
+      distinctBySellerAddress({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sellerAddress',
           caseSensitive: caseSensitive);
@@ -2377,7 +2398,7 @@ on QueryBuilder<CartCollection, CartCollection, QDistinct> {
 }
 
 extension CartCollectionQueryProperty
-on QueryBuilder<CartCollection, CartCollection, QQueryProperty> {
+    on QueryBuilder<CartCollection, CartCollection, QQueryProperty> {
   QueryBuilder<CartCollection, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -2427,14 +2448,14 @@ on QueryBuilder<CartCollection, CartCollection, QQueryProperty> {
   }
 
   QueryBuilder<CartCollection, String?, QQueryOperations>
-  sellerAddressProperty() {
+      sellerAddressProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sellerAddress');
     });
   }
 
   QueryBuilder<CartCollection, String?, QQueryOperations>
-  sellerEmailProperty() {
+      sellerEmailProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sellerEmail');
     });
@@ -2447,7 +2468,7 @@ on QueryBuilder<CartCollection, CartCollection, QQueryProperty> {
   }
 
   QueryBuilder<CartCollection, String?, QQueryOperations>
-  sellerImageProperty() {
+      sellerImageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sellerImage');
     });
